@@ -68,7 +68,7 @@ export function htmlReport(data, opts = {}) {
       group_checks(group.groups)
     }
   }
-  // group_checks(data.root_group.groups)
+  group_checks(data.root_group.groups)
 
   const standardMetrics = [
     'grpc_req_duration',
