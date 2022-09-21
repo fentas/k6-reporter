@@ -314,9 +314,12 @@
           </div>
           <div class="tab-pane" id="checks-and-groups" role="tabpanel" aria-labelledby="checks-and-group-tab">
             <div class="row">
-              <% for(group of data.root_group.groups) { %>
+
+              <% function render_group(group) { %>
               <div class="col-12 mb-3">
-                <h4 class="mb-3">Group - <%= group.name %></h4>
+                <% let i = group.path.match(/::/g).length %>
+                <h<%= i+3 %> class="mb-3"><%= i === 1 ? 'Group - ' : ' ➜ ' %><%= group.name %></h<%= i+3 %>>
+                <% if(group.checks.length) { %>
                 <div class="table-responsive">
                   <table class="table table-striped">
                     <thead>
@@ -335,8 +338,11 @@
                     </tbody>
                   </table>
                 </div>
+                <% } %>
+                <% group.groups.map(render_group) %>
               </div>
               <% } %>
+              <% data.root_group.groups.map(render_group) %>
               <div class="col-12 mb-3">
                 <h4 class="mb-3">Other Checks</h4>
                 <div class="table-responsive">

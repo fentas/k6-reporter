@@ -5,9 +5,12 @@
 
 // Have to import ejs this way, nothing else works
 import ejs from '../node_modules/ejs/ejs.min.js'
-import template from './template.ejs'
+const templates = {
+  'standard': require('./template.ejs'),
+  'bootstrap': require('./bootstrap.ejs'),
+}
 
-const version = '2.3.0'
+const version = '2.4.0'
 
 //
 // Main function should be imported and wrapped with the function handleSummary
@@ -55,13 +58,17 @@ export function htmlReport(data, opts = {}) {
     checkPasses += passes
   }
 
-  for (let group of data.root_group.groups) {
-    if (group.checks) {
-      let { passes, fails } = countChecks(group.checks)
-      checkFailures += fails
-      checkPasses += passes
+  const group_checks = (groups) => {
+    for (let group of groups) {
+      if (group.checks) {
+        let { passes, fails } = countChecks(group.checks)
+        checkFailures += fails
+        checkPasses += passes
+      }
+      group_checks(group.groups)
     }
   }
+  // group_checks(data.root_group.groups)
 
   const standardMetrics = [
     'grpc_req_duration',
@@ -93,6 +100,10 @@ export function htmlReport(data, opts = {}) {
   ]
 
   // Render the template
+  const template = opts.template in templates
+    ? templates[opts.template]
+    : templates['standard']
+
   const html = ejs.render(template, {
     data,
     title: opts.title,

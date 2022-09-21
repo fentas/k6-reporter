@@ -406,8 +406,9 @@
       <label for="tabthree"><i class="fas fa-tasks"></i> Checks & Groups</label>
       <div class="tab">
 
-        <% for(group of data.root_group.groups) { %>
+        <% function render_group(group) { %>
           <h2>&bull; Group - <%= group.name %></h2>
+          <% if(group.checks.length) { %>
           <table class="pure-table pure-table-horizontal" style="width: 100%">
             <thead>
               <tr>
@@ -422,8 +423,10 @@
               </tr>
             <% } %>
           </table>
-          <br>
+          <% } %>
+          <% for(sub_group of group.groups) render_group(sub_group) %>  
         <% } %>
+        <% for(group of data.root_group.groups) render_group(group) %>
 
         <h2>&bull; Other Checks</h2>
         <table class="pure-table pure-table-horizontal" style="width: 100%">
